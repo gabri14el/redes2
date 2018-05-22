@@ -30,7 +30,7 @@ public class Dicionario {
         else System.out.println("houve um erro ao carregar o dicionario...");
     }
 
-    //verifiva se palavra existe
+    //verifica se palavra existe
     public boolean existe(String plv){
         if (palavras.get(plv) != null)
                 return true;
@@ -38,7 +38,7 @@ public class Dicionario {
             return false;
     }
 
-    //retorn codigo da palavra, caso palavra não exista, retorna -1
+    //retorna codigo da palavra, caso palavra não exista, retorna -1
     public int codigo(String plv)   {
         if (palavras.get(plv) != null)
             return palavras.get(plv);
