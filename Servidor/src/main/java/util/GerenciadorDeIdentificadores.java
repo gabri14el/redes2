@@ -21,9 +21,6 @@ public class GerenciadorDeIdentificadores {
            salasID.add(new Integer(i));
         }
 
-        for (int i=2; i<255; i++){
-            multicastFinal.add(new Integer(i));
-        }
     }
 
     /**
@@ -39,7 +36,7 @@ public class GerenciadorDeIdentificadores {
      * @return
      */
     public boolean temSalaIDDisponivel(){
-        return salasID.size()==0;
+        return salasID.size()!=0;
     }
 
     public int geraSalaId(){

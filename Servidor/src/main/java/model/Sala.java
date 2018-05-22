@@ -34,7 +34,7 @@ public class Sala {
     }
 
     public String informacoesBasicasFormatadas(){
-        return id+","+jogadores.size();
+        return id+";"+jogadores.size();
     }
 
     @Override
@@ -44,8 +44,7 @@ public class Sala {
         builder.append(jogadores.size()+";");
 
         for(int i = 0; i < jogadores.size(); i++){
-            if(i != jogadores.size()-1)
-                builder.append(jogadores.get(i).toString()+";");
+            builder.append(jogadores.get(i).toString()+";");
         }
 
 
@@ -85,6 +84,10 @@ public class Sala {
             }
         }
         this.dados = sorteados;
+    }
+
+    void removeJogador(Jogador get) {
+        jogadores.remove(get);
     }
 
 }

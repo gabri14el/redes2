@@ -17,6 +17,15 @@ public class Sala {
         this.eCoordenador=eCoordenador;
     }
 
+    public int getNumeroParticipantes() {
+        return numeroParticipantes;
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    
 
     public void addJogador(Jogador j){
         jogadores.add(j);
@@ -33,4 +42,11 @@ public class Sala {
     public void setDados(String[][] dados) {
         this.dados = dados;
     }
+
+    @Override
+    public String toString() {
+        return codigo+"\t("+numeroParticipantes+")";
+    }
+    
+    
 }

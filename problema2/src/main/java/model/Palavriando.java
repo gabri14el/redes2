@@ -36,60 +36,71 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     public final static String ERRO_AUTENTICACAO = "erroAutenticacao";
     public final static String ERRO = "erro";
     public final static String SUCESSO = "sucesso";
+    public final static String SAIR_DA_SALA = "sairDaSala";
 
     public PalavriandoViewer viewer;
 
-    //======================================
-    //                 MAIN
-
-    public static void main(String[] args){
-        new Palavriando(null);
+    public String getNomeJogador() {
+        return nomeJogador;
     }
 
-    //======================================
+    public void setViewer(PalavriandoViewer viewer) {
+        this.viewer = viewer;
+    }
 
-
+    
 
     public Palavriando(PalavriandoViewer viewer) {
         this.viewer = viewer;
         dicionario = new Dicionario();
     }
 
+    public boolean verificaLogin(){
+        return nomeJogador != null && !nomeJogador.isEmpty() && senhaJogador !=null && !senhaJogador.isEmpty();
+    }
 
     /**
      * Metodo chamado quando uma mensagem vinda do servidor deve ser processada
      * @param msg
      */
     public synchronized void processaMensagemDoServidor(String msg) {
-        StringTokenizer token = new StringTokenizer(msg);
+        StringTokenizer token = new StringTokenizer(msg, ";");
         String tipoRequisicao = token.nextToken();
-        System.out.println("tipoResposta: "+tipoRequisicao);
-        if(tipoRequisicao.equals(CRIAR_SALA)){
-            String nextToken = token.nextToken();
-            if(!nextToken.equals(ERRO)){
-                int salaId = Integer.parseInt(nextToken);
+        System.out.println("Resposta: "+msg);
+        
+        if(tipoRequisicao.equals(ENTRAR_NA_SALA)){
+            String proximoToken = token.nextToken();
+            if(proximoToken.equals(ERRO))
+                viewer.erroCriarSala();
+            else{
+                int salaId = Integer.parseInt(proximoToken);
                 int qtd_jogadores = Integer.parseInt(token.nextToken());
 
-                salaJogo = new Sala(qtd_jogadores, salaId, true);
+                salaJogo = new Sala(qtd_jogadores, salaId, false);
 
                 for(int i = 0; i < qtd_jogadores; i++){
-                    String aux = token.nextToken();
-                    StringTokenizer tokenJogadores = new StringTokenizer(aux);
+                    String nome = token.nextToken();
+                    
                     try {
-                        salaJogo.addJogador(new Jogador(InetAddress.getByName(tokenJogadores.nextToken()), tokenJogadores.nextToken()));
+                        InetAddress endereco = InetAddress.getByName(token.nextToken());
+                        salaJogo.addJogador(new Jogador(endereco, nome));
                     } catch (UnknownHostException e) {
-                        e.printStackTrace();
+                        System.out.println("houve um erro ao resolver o endereço de um host...");
                     }
-
-                    //chama método no viewer pra setar a a sala
-                    viewer.entrouNaSala(salaJogo.nomeDosJogadores(), salaId);
                 }
-            }
-            else
-                viewer.erroCriarSala();
 
+                String dados[][]=new String[4][4];
+                for (int i=0; i<4; i++)
+                    for (int j = 0;j<4; j++){
+                        dados[i][j] = token.nextToken();
+                    }
+                salaJogo.setDados(dados);
+                //chama método no viewer pra setar a a sala
+                viewer.entrouNaSala(salaJogo.nomeDosJogadores(), salaId);
+
+            }
         }
-        else if(tipoRequisicao.equals(ENTRAR_NA_SALA)){
+        else if(tipoRequisicao.equals(CRIAR_SALA)){
             String proximoToken = token.nextToken();
             if(proximoToken.equals(ERRO))
                 viewer.erroCriarSala();
@@ -100,12 +111,13 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
                 salaJogo = new Sala(qtd_jogadores, salaId, true);
 
                 for(int i = 0; i < qtd_jogadores; i++){
-                    String aux = token.nextToken();
-                    StringTokenizer tokenJogadores = new StringTokenizer(aux);
+                    String nome = token.nextToken();
+                    
                     try {
-                        salaJogo.addJogador(new Jogador(InetAddress.getByName(tokenJogadores.nextToken()), tokenJogadores.nextToken()));
+                        InetAddress endereco = InetAddress.getByName(token.nextToken());
+                        salaJogo.addJogador(new Jogador(endereco, nome));
                     } catch (UnknownHostException e) {
-                        e.printStackTrace();
+                        System.out.println("houve um erro na hora de resolver o endereço de um host...");
                     }
                 }
 
@@ -128,9 +140,9 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
                 int qtd_jogadores = Integer.parseInt(token.nextToken());
 
 
-                salas.add(new Sala(id, qtd_jogadores, false));
+                salas.add(new Sala(qtd_jogadores, id, false));
             }
-
+            System.out.println(qtd_salas);
             viewer.listarSalas(salas);
         }
         else if(tipoRequisicao.equals(REMOVER_SALA)){
@@ -138,6 +150,10 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
             if(proximoToken.equals(ERRO)){
                 viewer.erroRmSala();
             }
+        }
+        else if(tipoRequisicao.equals(SAIR_DA_SALA)){
+            String proximoToken = token.nextToken();
+            if(proximoToken.equals(ERRO));
         }
     }
 
@@ -166,8 +182,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
 
     public void listarSalas() {
         StringBuilder builder = new StringBuilder();
-        builder.append(LISTA_DE_SALAS);
-        builder.append(nomeJogador+";"+senhaJogador+";");
+        builder.append(LISTA_DE_SALAS+";");
         solicitaAoServidor(builder.toString());
     }
 
@@ -178,6 +193,14 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         builder.append(salaJogo.codigo+";");
         solicitaAoServidor(builder.toString());
     }
+    
+    public void criarSala(){
+        StringBuilder builder = new StringBuilder();
+        builder.append(CRIAR_SALA+";");
+        builder.append(nomeJogador+";"+senhaJogador+";");
+        solicitaAoServidor(builder.toString());
+    }
+    
 
 
     /**
@@ -187,6 +210,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     private void solicitaAoServidor(String mensagem){
         ConexaoServidor serv = new ConexaoServidor(this, mensagem);
         new Thread(serv).start();
+        System.out.println("enviando mensagem ao serv: "+mensagem);
     }
 
     public synchronized void processaMesagemGrupo(String str) {
@@ -213,6 +237,14 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         } catch (Exception e) {
             System.err.println("houve um erro ao enviar uma mensagem");
         }
+    }
+
+    public void sairDaSala() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(SAIR_DA_SALA+";");
+        builder.append(nomeJogador+";"+senhaJogador+";");
+        builder.append(salaJogo.codigo);
+        solicitaAoServidor(builder.toString());
     }
 
 }

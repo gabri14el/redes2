@@ -35,6 +35,6 @@ public class Jogador {
 
     @Override
     public String toString() {
-        return nome+","+host;
+        return nome+";"+host;
     }
 }

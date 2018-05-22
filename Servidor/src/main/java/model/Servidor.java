@@ -37,6 +37,7 @@ public class Servidor implements ProcessadorDeConexoes{
     public final static String ERRO_AUTENTICACAO = "erroAutenticacao";
     public final static String ERRO = "erro";
     public final static String SUCESSO = "sucesso";
+     public final static String SAIR_DA_SALA = "sairDaSala";
 
 
 
@@ -46,8 +47,6 @@ public class Servidor implements ProcessadorDeConexoes{
         new Thread(conexao).start();
 
         //iniciando a thread que processa as conexoes com os clientes
-        geradorDeConexoes = new GeradorDeConexoes();
-        new Thread(geradorDeConexoes).start();
         jogadores = new HashMap<String, Jogador>();
         salas =new TreeMap<Integer, Sala>();
         contadorSalas = 0;
@@ -105,13 +104,14 @@ public class Servidor implements ProcessadorDeConexoes{
         }
         else{
             jogadores.put(nome, new Jogador(nome, senha));
+            jogadores.get(nome).setHost(host);
             return true;
         }
     }
-    public synchronized void processaConexao(String host, EnviadorDeResposta enviadorDeResposta, String nomeJogador) {
-        StringTokenizer token = new StringTokenizer(host, ";");
+    public synchronized void processaConexao(String host, EnviadorDeResposta enviadorDeResposta, String msg) {
+        StringTokenizer token = new StringTokenizer(msg, ";");
         String requisicao = token.nextToken();
-
+        System.out.println(requisicao);
         StringBuilder resposta = new StringBuilder();
         resposta.append(requisicao+";");
         //reposnde requisicao de criar sala
@@ -165,6 +165,16 @@ public class Servidor implements ProcessadorDeConexoes{
                     resposta.append(ERRO);
                 }
             }
+        }
+        else if(requisicao.equals(SAIR_DA_SALA)){
+            String nome = token.nextToken();
+            String senha = token.nextToken();
+            if(transacaoValida(nome, senha, host)){
+                int id = Integer.parseInt(token.nextToken());
+                Sala s = salas.get(id);
+                s.removeJogador(jogadores.get(nome));
+            }else
+                resposta.append(ERRO);
         }
         enviadorDeResposta.enviaResposta(resposta.toString());
     }
