@@ -10,5 +10,12 @@
     <version>1.0-SNAPSHOT</version>
 
 
-
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.jgroups/jgroups -->
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+            <version>4.0.11.Final</version>
+        </dependency>
+    </dependencies>
 </project>

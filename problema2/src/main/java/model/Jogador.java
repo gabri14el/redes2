@@ -35,7 +35,7 @@ public class Jogador {
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Jogador)
-            return ((Jogador)obj).nome.equals(this.endereco);
+            return ((Jogador)obj).nome.equals(this.nome);
         else
             return false;
     }

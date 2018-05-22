@@ -9,10 +9,10 @@ import java.net.Socket;
 public class ConexaoServidor implements Runnable{
 
     ProcessaConexaoServidor processaConexaoServidor;
-    String nome;
-    public ConexaoServidor(ProcessaConexaoServidor processador, String nome){
+    String mensagem;
+    public ConexaoServidor(ProcessaConexaoServidor processador, String mensagem){
         processaConexaoServidor =processador;
-        this.nome = nome;
+        this.mensagem = mensagem;
     }
 
     public void run() {
@@ -23,10 +23,10 @@ public class ConexaoServidor implements Runnable{
 
             System.out.println("conectando com o servidor e esperando hosts...");
 
-            out.writeUTF(solicitaMensagem());
+            out.writeUTF(mensagem);
             //lê mensagem enviada pelo servidor
-            String salas = in.readUTF();
-            processaConexaoServidor.processaMensagemDoServidor(salas);
+            String resposta = in.readUTF();
+            processaConexaoServidor.processaMensagemDoServidor(resposta);
 
             socket.close();
 
@@ -35,7 +35,4 @@ public class ConexaoServidor implements Runnable{
         }
     }
 
-    private String solicitaMensagem(){
-        return nome+";"+"salas";
-    }
 }
