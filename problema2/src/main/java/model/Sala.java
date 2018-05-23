@@ -20,9 +20,14 @@ public class Sala {
     public int getNumeroParticipantes() {
         return numeroParticipantes;
     }
-
+    
+   
     public int getCodigo() {
         return codigo;
+    }
+    
+    public String nomeDoCoordenador(){
+        return jogadores.get(0).getNome();
     }
 
     

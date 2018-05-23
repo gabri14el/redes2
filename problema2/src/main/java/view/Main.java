@@ -7,6 +7,7 @@ package view;
 
 import conexao.PalavriandoViewer;
 import java.util.List;
+import java.util.TimerTask;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import model.Palavriando;
@@ -262,6 +263,7 @@ public class Main extends javax.swing.JFrame implements PalavriandoViewer {
             modelo.addElement(s.toString());
         }
     }
+    
 
     public void infoSala(List<String> jogadores, int id, boolean eCoordenador) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -294,4 +296,6 @@ public class Main extends javax.swing.JFrame implements PalavriandoViewer {
     private void prepararComponentes() {
         
     }
+    
+    
 }

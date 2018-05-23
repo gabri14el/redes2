@@ -10,6 +10,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
+import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import model.Jogador;
 import model.Palavriando;
@@ -21,6 +24,7 @@ import model.Palavriando;
 public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
 
     Palavriando jogo;
+    Thread atualizador;
     /**
      * Creates new form Sala
      */
@@ -69,6 +73,32 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
+        botao_comecar.setVisible(false);
+        botao_comecar.setEnabled(false);
+      
+        if(jogo.eCoordenadorDaSala()){
+            botao_comecar.setVisible(true);
+           
+            botao_comecar.setEnabled(true);
+            texto_de_espera.setText("clique em comecar para iniciar");
+        }
+        
+        atualizador=new Thread(new Runnable() {
+            public void run() {
+                try {
+                    while(true){
+                        Thread.sleep(5000);
+                        System.out.println("atualizando informações da sala...");
+                        jogo.entrarNaSala(jogo.getSalaId());
+                    }
+                    
+                } catch (InterruptedException ex) {
+                   // Logger.getLogger(Sala.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        //atualizador.start();
     }
 
     /**
@@ -87,7 +117,8 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
         jScrollPane1 = new javax.swing.JScrollPane();
         jogadores = new javax.swing.JList<>();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        texto_de_espera = new javax.swing.JLabel();
+        botao_comecar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -106,7 +137,14 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
 
         jLabel2.setText("Jogadores");
 
-        jLabel3.setText("espere o início do jogo");
+        texto_de_espera.setText("espere o início do jogo");
+
+        botao_comecar.setText("começar");
+        botao_comecar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botao_comecarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -122,13 +160,17 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(sala_id))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel3)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(texto_de_espera))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 194, Short.MAX_VALUE)
+                                .addComponent(botao_comecar)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -147,7 +189,10 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(65, 65, 65)
-                        .addComponent(jLabel3)))
+                        .addComponent(texto_de_espera))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(209, 209, 209)
+                        .addComponent(botao_comecar)))
                 .addGap(21, 21, 21))
         );
 
@@ -155,7 +200,9 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -164,6 +211,10 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void botao_comecarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao_comecarActionPerformed
+        jogo.iniciarJogo();
+    }//GEN-LAST:event_botao_comecarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -201,18 +252,38 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botao_comecar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<String> jogadores;
     private javax.swing.JLabel nome_coordenador;
     private javax.swing.JLabel sala_id;
+    private javax.swing.JLabel texto_de_espera;
     // End of variables declaration//GEN-END:variables
 
     public void entrouNaSala(List<String> jogadores, int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        sala_id.setText(id+"");
+        nome_coordenador.setText(jogadores.get(0));
+        DefaultListModel modelo = new DefaultListModel();
+        this.jogadores.setModel(modelo);
+        
+        for(String j: jogadores)
+            modelo.addElement(j);
+        
+        if(jogadores.get(0).equals(jogo.getNomeJogador()))
+            nome_coordenador.setText("você");
+        
+        botao_comecar.setVisible(false);
+        botao_comecar.setEnabled(false);
+      
+        if(jogo.eCoordenadorDaSala()){
+            botao_comecar.setVisible(true);
+           
+            botao_comecar.setEnabled(true);
+            texto_de_espera.setText("clique em comecar para iniciar");
+        }
     }
 
     public void listarSalas(List<model.Sala> salas) {
@@ -220,7 +291,7 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
     }
 
     public void infoSala(List<String> jogadores, int id, boolean eCoordenador) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     public void comecarJogo(model.Sala sala) {

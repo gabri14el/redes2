@@ -16,7 +16,7 @@ public class Servidor implements ProcessadorDeConexoes{
     TreeMap<Integer, Sala> salas;
     int contadorSalas;
     GerenciadorDeIdentificadores identificadores;
-
+    List<Mensagem> mensagensParaProcessar;
 
 
 
@@ -51,6 +51,27 @@ public class Servidor implements ProcessadorDeConexoes{
         salas =new TreeMap<Integer, Sala>();
         contadorSalas = 0;
         identificadores = new GerenciadorDeIdentificadores();
+        mensagensParaProcessar = new LinkedList<Mensagem>();
+        iniciaThreadDeTratamento();
+    }
+    
+    public void iniciaThreadDeTratamento(){
+        final Servidor a= this;
+        new Thread(new Runnable() {
+            public void run() {
+                    while(true){
+                        synchronized(a){
+                            if(!mensagensParaProcessar.isEmpty()){
+                            System.out.println("processando mensagem...");
+                            Mensagem m = mensagensParaProcessar.remove(0);
+                            processaMensagem(m.host, m.enviadorDeResposta, m.msg);
+                        }
+                        }
+                        
+                    }
+                
+            }
+        }).start();
     }
 
     /**
@@ -109,6 +130,79 @@ public class Servidor implements ProcessadorDeConexoes{
         }
     }
     public synchronized void processaConexao(String host, EnviadorDeResposta enviadorDeResposta, String msg) {
+      /*  StringTokenizer token = new StringTokenizer(msg, ";");
+        String requisicao = token.nextToken();
+        System.out.println(requisicao);
+        StringBuilder resposta = new StringBuilder();
+        resposta.append(requisicao+";");
+        //reposnde requisicao de criar sala
+        if(requisicao.equals(CRIAR_SALA)){
+            String nome = token.nextToken();
+            String senha = token.nextToken();
+            if(transacaoValida(nome, senha, host) && identificadores.temSalaIDDisponivel()){
+                Sala sala = new Sala(jogadores.get(nome), identificadores.geraSalaId());
+                salas.put(sala.id, sala);
+                resposta.append(sala.toString());
+            }else{
+                resposta.append(ERRO);
+            }
+        }
+        //responde requisição de entrar na sala
+        else if(requisicao.equals(ENTRAR_NA_SALA)){
+            String nome = token.nextToken();
+            String senha = token.nextToken();
+            if(transacaoValida(nome, senha, host)){
+                int id = Integer.parseInt(token.nextToken());
+                Sala sala = salas.get(id);
+                sala.addJogador(jogadores.get(nome));
+                resposta.append(sala.toString());
+
+            }else{
+                resposta.append(ERRO);
+            }
+        }
+        //responde requisicao de limpar salas
+        else if(requisicao.equals(LISTA_DE_SALAS)){
+            resposta.append(salas.size()+";");
+            for(Sala s: salas.values()){
+                resposta.append(s.informacoesBasicasFormatadas()+";");
+            }
+        }
+        //responde requisicao de remover sala da lista de salas
+        else if(requisicao.equals(REMOVER_SALA)){
+            String nome = token.nextToken();
+            String senha = token.nextToken();
+            if(transacaoValida(nome, senha, host)){
+                int id = Integer.parseInt(token.nextToken());
+                Jogador jogador = jogadores.get(nome);
+                Sala sala = salas.get(id);
+                //verifica se quem enviou a mensagem foi o coordenador da sala e
+                if(sala.eCoordenador(jogador)){
+                    salas.remove(id);
+                    identificadores.disponibilizaSalaId(id);
+                    resposta.append(SUCESSO);
+                }
+                else{
+                    resposta.append(ERRO);
+                }
+            }
+        }
+        else if(requisicao.equals(SAIR_DA_SALA)){
+            String nome = token.nextToken();
+            String senha = token.nextToken();
+            if(transacaoValida(nome, senha, host)){
+                int id = Integer.parseInt(token.nextToken());
+                Sala s = salas.get(id);
+                s.removeJogador(jogadores.get(nome));
+            }else
+                resposta.append(ERRO);
+        }
+        enviadorDeResposta.enviaResposta(resposta.toString());*/
+            mensagensParaProcessar.add(new Mensagem(enviadorDeResposta, host, msg));        
+    }
+
+    
+    public synchronized void processaMensagem(String host, EnviadorDeResposta enviadorDeResposta, String msg) {
         StringTokenizer token = new StringTokenizer(msg, ";");
         String requisicao = token.nextToken();
         System.out.println(requisicao);
@@ -178,11 +272,12 @@ public class Servidor implements ProcessadorDeConexoes{
         }
         enviadorDeResposta.enviaResposta(resposta.toString());
     }
-
     public void erroDuranteConexao(String cliente, EnviadorDeResposta enviadorDeResposta, String nomeJogador) {
         System.out.println("processando erro..");
         geradorDeConexoes.rmMensagem(new Mensagem(enviadorDeResposta, cliente, nomeJogador));
     }
 
+    
+   
 
 }

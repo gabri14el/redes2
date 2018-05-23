@@ -6,12 +6,12 @@ public class Mensagem {
 
     EnviadorDeResposta enviadorDeResposta;
     String host;
-    String nome;
+    String msg;
 
     public Mensagem(EnviadorDeResposta enviadorDeResposta, String host, String nome) {
         this.enviadorDeResposta = enviadorDeResposta;
         this.host = host;
-        this.nome = nome;
+        this.msg = nome;
     }
 
     public String getHost() {
@@ -23,7 +23,7 @@ public class Mensagem {
     }
 
     public String getNome() {
-        return nome;
+        return msg;
     }
 
     @Override

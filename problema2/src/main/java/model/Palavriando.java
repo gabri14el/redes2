@@ -37,6 +37,9 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     public final static String ERRO = "erro";
     public final static String SUCESSO = "sucesso";
     public final static String SAIR_DA_SALA = "sairDaSala";
+    
+    
+    public final static String COMECAR_JOGO= "comecarJogo";
 
     public PalavriandoViewer viewer;
 
@@ -97,7 +100,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
                 salaJogo.setDados(dados);
                 //chama método no viewer pra setar a a sala
                 viewer.entrouNaSala(salaJogo.nomeDosJogadores(), salaId);
-
+                configuraCanal(salaJogo.nomeDoCoordenador());
             }
         }
         else if(tipoRequisicao.equals(CRIAR_SALA)){
@@ -129,7 +132,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
                 salaJogo.setDados(dados);
                 //chama método no viewer pra setar a a sala
                 viewer.entrouNaSala(salaJogo.nomeDosJogadores(), salaId);
-
+                configuraCanal(salaJogo.nomeDoCoordenador());
             }
         }
         else if(tipoRequisicao.equals(LISTA_DE_SALAS)){
@@ -214,16 +217,24 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     }
 
     public synchronized void processaMesagemGrupo(String str) {
-
+        
     }
 
+    
+    public int getSalaId(){
+        return salaJogo.codigo;
+    }
     private void configuraCanal(String str){
+        if(canal != null){
+            canal.close();
+        }
         try {
             canal = new JChannel();
             canal.connect(str);
             canal.setReceiver(new Receiver() {
                 public void receive(Message message) {
                     processaMesagemGrupo((String)message.getObject());
+                    System.out.println("mensagem em grupo recebida: ("+message.getSrc()+"):"+(String)message.getObject());
                 }
             });
         } catch (Exception e) {
@@ -246,5 +257,15 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         builder.append(salaJogo.codigo);
         solicitaAoServidor(builder.toString());
     }
+    
+   public boolean eCoordenadorDaSala(){
+       return salaJogo.nomeDoCoordenador().equals(nomeJogador);
+   }
+   
+   
+   //método que enviar no canal pra comecar jogo
+   public void iniciarJogo(){
+       enviaNoCanal(nomeJogador+";"+COMECAR_JOGO);
+   }
 
 }

@@ -19,7 +19,8 @@ public class Sala {
     }
 
     public void addJogador(Jogador jogador){
-        jogadores.add(jogadores.size(),jogador);
+        if(!jogadores.contains(jogador))
+            jogadores.add(jogadores.size(),jogador);
     }
 
     public void rmJogador(Jogador jogador){
