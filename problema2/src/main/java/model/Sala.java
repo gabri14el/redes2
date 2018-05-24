@@ -53,5 +53,38 @@ public class Sala {
         return codigo+"\t("+numeroParticipantes+")";
     }
     
+    //retorna lista com as Strings contidas nos dados da sala
+    public List<String> getListDados(){
+        List<String> letras = new LinkedList<String>();
+        for(int i=0; i<4; i++){
+            for(int j=0; j<4; j++){
+                letras.add(dados[i][j]);
+            }
+        }
+        
+        return letras;
+    }
     
+    //método que verifica se uma string está nos dados
+    public boolean verificaSeStringEstaNosDados(String s){
+        List<String> letras = this.getListDados();
+        s = s.toUpperCase();
+        char[] vetor = s.toCharArray();
+        String aux;
+        for(int i=0; i< vetor.length; i++){
+            if(vetor[i] == 'Q' && vetor[i+1] == 'U'){
+                i++;
+                if(!letras.remove("Qu")) return false;
+                
+            }else if(vetor[i] == 'Q' && vetor[i+1] != 'U'){
+                return false;
+            }
+            else{
+                aux = vetor[i]+"";
+                if(!letras.remove(aux)) 
+                    return false;
+            }
+        }
+        return true;
+    }
 }

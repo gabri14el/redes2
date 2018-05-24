@@ -42,6 +42,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     public final static String COMECAR_JOGO= "comecarJogo";
 
     public PalavriandoViewer viewer;
+    public List<Integer> palavras;
 
     public String getNomeJogador() {
         return nomeJogador;
@@ -56,6 +57,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     public Palavriando(PalavriandoViewer viewer) {
         this.viewer = viewer;
         dicionario = new Dicionario();
+        palavras = new LinkedList<Integer>();
     }
 
     public boolean verificaLogin(){
@@ -304,6 +306,21 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     
     public String[][] getDados(){
         return salaJogo.dados;
+    }
+    
+    //retorna se a string está entre os dados 
+    public boolean verificaSeStringEstaNosDados(String str){
+        return salaJogo.verificaSeStringEstaNosDados(str);
+    }
+    //método usado para verificar se palavra existe no dicionário
+    public boolean addPalavra(String plv){
+        if(dicionario.existe(plv)){
+            if(!palavras.contains(dicionario.codigo(plv)))
+                palavras.add(dicionario.codigo(plv));
+            return true;
+        }
+        else
+            return false;
     }
 
 }

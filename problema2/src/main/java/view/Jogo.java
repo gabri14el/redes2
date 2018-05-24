@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import model.Palavriando;
 import model.Sala;
+import sun.security.provider.VerificationProvider;
 
 /**
  *
@@ -69,16 +70,17 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        lista_jogadores = new javax.swing.JList();
+        lista_jogadores = new javax.swing.JList<>();
         palavra_digitada = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        lista_palavras = new javax.swing.JList();
+        lista_palavras = new javax.swing.JList<>();
         jLabel2 = new javax.swing.JLabel();
         ok_palavra = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         dados = new javax.swing.JTextArea();
         timer = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -114,6 +116,8 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
         timer.setFont(new java.awt.Font("Ubuntu", 0, 36)); // NOI18N
         timer.setText("jLabel3");
 
+        jLabel3.setText("Escreva uma nova palavra: ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -127,8 +131,9 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
                             .addComponent(palavra_digitada))
                         .addGap(18, 18, 18)
                         .addComponent(ok_palavra, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(timer))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                    .addComponent(timer)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel1)
@@ -148,7 +153,9 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(timer)
-                        .addGap(52, 52, 52)
+                        .addGap(29, 29, 29)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(palavra_digitada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(ok_palavra))
@@ -166,7 +173,13 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
     }// </editor-fold>//GEN-END:initComponents
 
     private void ok_palavraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ok_palavraActionPerformed
-        // TODO add your handling code here:
+        String c = palavra_digitada.getText();
+        if(jogo.verificaSeStringEstaNosDados(c))
+        if(jogo.addPalavra(c)){
+           DefaultListModel modelo_palavras = (DefaultListModel)lista_palavras.getModel();
+           modelo_palavras.addElement(c);
+           palavra_digitada.setText("");
+       }
     }//GEN-LAST:event_ok_palavraActionPerformed
 
     
@@ -175,6 +188,7 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
     private javax.swing.JTextArea dados;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

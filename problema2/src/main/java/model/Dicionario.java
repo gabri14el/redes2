@@ -2,14 +2,17 @@ package model;
 
 import java.io.*;
 import java.util.HashMap;
+import org.jgroups.util.BoundedHashMap;
 
 public class Dicionario {
 
     public static final String path = "dicionario.dic";
-    HashMap<String, Integer> palavras;
+    HashMap<String, Integer> palavras; //mapa usado no indexamento
+    HashMap<Integer, String> palavras_; //mapa usado no desindexamento
 
     public Dicionario() {
         palavras = new HashMap<String, Integer>();
+        palavras_=new HashMap<Integer, String>();
         leDiocionario();
     }
 
@@ -21,10 +24,12 @@ public class Dicionario {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
                 for(int i = 0; reader.ready(); i++){
-                    palavras.put(reader.readLine(), i);
+                    String aux = reader.readLine();
+                    palavras.put(aux, i);
+                    palavras_.put(i, aux);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("houve um erro com o dicionario...");
             }
         }
         else System.out.println("houve um erro ao carregar o dicionario...");
@@ -44,6 +49,14 @@ public class Dicionario {
             return palavras.get(plv);
         else
             return -1;
+    }
+    
+    //retorna uma palavra a partir de um código
+    public String palavra(int codigo){
+        if (palavras_.get(codigo) != null)
+            return palavras_.get(codigo);
+        else
+            return null;
     }
 
 }
