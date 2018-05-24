@@ -216,10 +216,31 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         System.out.println("enviando mensagem ao serv: "+mensagem);
     }
 
+    
+    /**
+     * Método responsável por processar mensagens que chegam do canal 
+     * @param str 
+     */
     public synchronized void processaMesagemGrupo(String str) {
+        StringTokenizer token = new StringTokenizer(str, ";");
+        String usuario = token.nextToken();
+        String requisicao = token.nextToken();
         
+        //se o coordenador enviar o comecar jogo
+        if(requisicao.equals(COMECAR_JOGO)){
+            if(usuario.equals(salaJogo.nomeDoCoordenador())){
+               iniciarJogo(); 
+            }
+        }          
     }
 
+    /**
+     * Retorna nome dos jogadores
+     * @return lista com o nome dos jogadores
+     */
+    public List<String> pegaJogadores(){
+        return salaJogo.nomeDosJogadores();
+    }
     
     public int getSalaId(){
         return salaJogo.codigo;
@@ -231,6 +252,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         try {
             canal = new JChannel();
             canal.connect(str);
+            System.out.println("setando recebdor de mensagens do canal...");
             canal.setReceiver(new Receiver() {
                 public void receive(Message message) {
                     processaMesagemGrupo((String)message.getObject());
@@ -244,6 +266,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
 
     private void enviaNoCanal(String msg){
         try {
+            System.out.println("enviando mensagem no canal: "+msg);
             canal.send(new Message(null, msg));
         } catch (Exception e) {
             System.err.println("houve um erro ao enviar uma mensagem");
@@ -258,14 +281,28 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         solicitaAoServidor(builder.toString());
     }
     
+    //retorna se o usuario eh o coordenador da sala
    public boolean eCoordenadorDaSala(){
        return salaJogo.nomeDoCoordenador().equals(nomeJogador);
    }
    
    
    //método que enviar no canal pra comecar jogo
-   public void iniciarJogo(){
+   public void solicitaIniciarJogo(){
        enviaNoCanal(nomeJogador+";"+COMECAR_JOGO);
    }
+
+   //método chamado quando se inicia o jogo
+   private void iniciarJogo() {
+       viewer.comecarJogo(salaJogo);
+   }
+
+    public void finalizarJogo() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public String[][] getDados(){
+        return salaJogo.dados;
+    }
 
 }

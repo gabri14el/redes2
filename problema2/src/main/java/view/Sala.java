@@ -213,7 +213,7 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
     }// </editor-fold>//GEN-END:initComponents
 
     private void botao_comecarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao_comecarActionPerformed
-        jogo.iniciarJogo();
+        jogo.solicitaIniciarJogo();
     }//GEN-LAST:event_botao_comecarActionPerformed
 
     /**
@@ -295,7 +295,11 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
     }
 
     public void comecarJogo(model.Sala sala) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        view.Jogo jogo = new view.Jogo(this.jogo);
+        this.jogo.setViewer(jogo);
+        this.setVisible(false);
+        jogo.setVisible(true);
+        this.dispose();
     }
 
     public void erroEntrouNaSala() {
