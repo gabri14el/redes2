@@ -26,6 +26,7 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
      * Creates new form Jogo
      */
     public Jogo(Palavriando jogo) {
+        letras = new LinkedList<String>();
         this.jogo = jogo;
         initComponents();
         inicializaContador();
@@ -199,12 +200,14 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
         StringBuilder builder = new StringBuilder();
         String[][] dados = jogo.getDados();
 
-        for(int i=0; i<dados.length; i++){
-            for(int j=0; j<dados[0].length; j++){
-                builder.append("\t"+dados[i][j]);
+        for(int i=0; i<4; i++){
+            for(int j=0; j<4; j++){
+                builder.append("    "+dados[i][j]);
                 letras.add(dados[i][j]);
             }
+            builder.append("\n");
         }
+
 
         this.dados.setEditable(false);
         this.dados.setText(builder.toString());

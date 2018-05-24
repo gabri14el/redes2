@@ -222,6 +222,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
      * @param str 
      */
     public synchronized void processaMesagemGrupo(String str) {
+        System.out.println("mensagem recebida no grupo: "+str);
         StringTokenizer token = new StringTokenizer(str, ";");
         String usuario = token.nextToken();
         String requisicao = token.nextToken();
@@ -256,7 +257,6 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
             canal.setReceiver(new Receiver() {
                 public void receive(Message message) {
                     processaMesagemGrupo((String)message.getObject());
-                    System.out.println("mensagem em grupo recebida: ("+message.getSrc()+"):"+(String)message.getObject());
                 }
             });
         } catch (Exception e) {
@@ -268,7 +268,6 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         try {
             System.out.println("enviando mensagem no canal: "+msg);
             canal.send(new Message(null, msg));
-            System.out.println("fim da mensagem");
         } catch (Exception e) {
             System.err.println("houve um erro ao enviar uma mensagem");
         }

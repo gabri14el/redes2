@@ -1,12 +1,10 @@
 package conexao;
 
-import javafx.scene.chart.PieChart;
-
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.*;
-import java.util.LinkedList;
-import java.util.List;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class ConexaoClienteP2P implements Runnable{
 
