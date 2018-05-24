@@ -30,7 +30,6 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
         initComponents();
         inicializaContador();
         configura();
-        
     }
     
     
@@ -69,11 +68,11 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        lista_jogadores = new javax.swing.JList<>();
+        lista_jogadores = new javax.swing.JList();
         palavra_digitada = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        lista_palavras = new javax.swing.JList<>();
+        lista_palavras = new javax.swing.JList();
         jLabel2 = new javax.swing.JLabel();
         ok_palavra = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();

@@ -52,7 +52,7 @@ public class Main extends javax.swing.JFrame implements PalavriandoViewer {
         criar_sala = new javax.swing.JButton();
         atualizar_salas = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        lista = new javax.swing.JList<>();
+        lista = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 

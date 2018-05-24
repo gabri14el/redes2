@@ -251,8 +251,8 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         }
         try {
             canal = new JChannel();
-            canal.connect(str);
-            System.out.println("setando recebdor de mensagens do canal...");
+            canal.connect(str+salaJogo.codigo);
+            System.out.println("setando recebedor de mensagens do canal...");
             canal.setReceiver(new Receiver() {
                 public void receive(Message message) {
                     processaMesagemGrupo((String)message.getObject());
@@ -268,6 +268,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         try {
             System.out.println("enviando mensagem no canal: "+msg);
             canal.send(new Message(null, msg));
+            System.out.println("fim da mensagem");
         } catch (Exception e) {
             System.err.println("houve um erro ao enviar uma mensagem");
         }
@@ -292,11 +293,12 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
        enviaNoCanal(nomeJogador+";"+COMECAR_JOGO);
    }
 
-   //método chamado quando se inicia o jogo
+   //método chamado para coordenador iniciar jogo
    private void iniciarJogo() {
        viewer.comecarJogo(salaJogo);
    }
 
+   //método chamado quando o timer do jogo acaba
     public void finalizarJogo() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
