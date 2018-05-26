@@ -1,5 +1,6 @@
 package model;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -9,6 +10,8 @@ public class Sala {
     Jogador coordenador;
     int id;
     String[][] dados;
+    String canal;
+    HashMap<String, Jogador> jogadores_;
 
     public Sala(Jogador coordenador, int id) {
         jogadores = new LinkedList<Jogador>();
@@ -16,11 +19,18 @@ public class Sala {
         this.id = id;
         jogadores.add(0, coordenador);
         sorteiaDados();
+        this.canal = coordenador.getNome()+id;
     }
 
+    public void addPalavra(String nome_jogador, String plv){
+        
+    }
     public void addJogador(Jogador jogador){
-        if(!jogadores.contains(jogador))
-            jogadores.add(jogadores.size(),jogador);
+        if(!jogadores.contains(jogador)){
+             jogadores.add(jogadores.size(),jogador);
+             
+        }
+           
     }
 
     public void rmJogador(Jogador jogador){
@@ -54,6 +64,7 @@ public class Sala {
                 builder.append(dados[i][k]+";");
             }
         }
+        builder.append(canal);
         return builder.toString();
     }
 

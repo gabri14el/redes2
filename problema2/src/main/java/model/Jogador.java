@@ -12,11 +12,13 @@ public class Jogador {
     InetAddress endereco;
     String nome;
     List<String> palavras;
+    int pontos;
 
     public Jogador(InetAddress endereco, String nome) {
         this.endereco = endereco;
         this.nome = nome;
         palavras = new LinkedList<String>();
+        pontos = 0;
     }
 
     public InetAddress getEndereco() {
@@ -26,7 +28,21 @@ public class Jogador {
     public String getNome() {
         return nome;
     }
+    
+    public void addPalavra(String plv){
+        palavras.add(plv);
+    }
 
+    public List<String> getPalavras() {
+        return palavras;
+    }
+    
+   public void calcularPontos(){
+       for(String aux: palavras){
+           pontos+=aux.length();
+       }
+   }
+   
     /**
      * Verifica se os jagores são iguais com base no nome
      * @param obj

@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,12 +11,18 @@ public class Sala {
     List<Jogador> jogadores;
     boolean eCoordenador;
     String dados[][];
-
+    HashMap<String, Jogador> jogadores_;
+    HashMap<String, Integer> contador_palavras;
+    List<String> palavras_repetidas;
+    
     public Sala(int numeroParticipantes, int codigo, boolean eCoordenador) {
         this.numeroParticipantes = numeroParticipantes;
         this.codigo = codigo;
         jogadores = new LinkedList<Jogador>();
         this.eCoordenador=eCoordenador;
+        jogadores_ = new HashMap<String, Jogador>();
+        contador_palavras = new HashMap<String, Integer>();
+        palavras_repetidas = new LinkedList<String>();
     }
 
     public int getNumeroParticipantes() {
@@ -34,6 +42,7 @@ public class Sala {
 
     public void addJogador(Jogador j){
         jogadores.add(j);
+        jogadores_.put(j.nome, j);
     }
 
     //retorn lista com nome dos jogadores
@@ -86,5 +95,28 @@ public class Sala {
             }
         }
         return true;
+    }
+    
+    //metodos usados na contagem dos pontos
+    
+    public void addPalavra(String jogador, String palavra){
+        Jogador j = jogadores_.get(jogador);
+        if(j != null){
+            j.addPalavra(palavra);
+        }
+        if(contador_palavras.containsKey(palavra))
+            palavras_repetidas.add(palavra);
+        else
+            contador_palavras.put(palavra, 1);
+    }
+    
+    public void calculaPontuacaoDosJogadores(){
+        for(Jogador j: jogadores){
+            j.palavras.removeAll(palavras_repetidas);
+            j.calcularPontos();
+        }
+        
+        //ordena a coleção
+        Collections.sort(jogadores, (left, right) -> left.pontos - right.pontos);
     }
 }

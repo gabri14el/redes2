@@ -8,6 +8,7 @@ import view.ProcessadorReqView;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     
     
     public final static String COMECAR_JOGO= "comecarJogo";
+    public final static String PONTUACAO = "pontuacao";
 
     public PalavriandoViewer viewer;
     public List<Integer> palavras;
@@ -100,9 +102,11 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
                         dados[i][j] = token.nextToken();
                     }
                 salaJogo.setDados(dados);
+                //entra no canal JGroups
+                configuraCanal(token.nextToken());
                 //chama método no viewer pra setar a a sala
                 viewer.entrouNaSala(salaJogo.nomeDosJogadores(), salaId);
-                configuraCanal(salaJogo.nomeDoCoordenador());
+                
             }
         }
         else if(tipoRequisicao.equals(CRIAR_SALA)){
@@ -133,8 +137,9 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
                     }
                 salaJogo.setDados(dados);
                 //chama método no viewer pra setar a a sala
+                configuraCanal(token.nextToken());
                 viewer.entrouNaSala(salaJogo.nomeDosJogadores(), salaId);
-                configuraCanal(salaJogo.nomeDoCoordenador());
+                
             }
         }
         else if(tipoRequisicao.equals(LISTA_DE_SALAS)){
@@ -221,7 +226,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     
     /**
      * Método responsável por processar mensagens que chegam do canal 
-     * @param str 
+     * @param str mensagem 
      */
     public synchronized void processaMesagemGrupo(String str) {
         System.out.println("mensagem recebida no grupo: "+str);
@@ -234,6 +239,10 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
             if(usuario.equals(salaJogo.nomeDoCoordenador())){
                iniciarJogo(); 
             }
+        }else if(requisicao.equals(PONTUACAO)){
+            int qtd = Integer.parseInt(token.nextToken());
+            for(int i=0; i<qtd; i++)
+                salaJogo.addPalavra(usuario, dicionario.palavra(Integer.parseInt(token.nextToken())));
         }          
     }
 
@@ -294,6 +303,17 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
        enviaNoCanal(nomeJogador+";"+COMECAR_JOGO);
    }
 
+   //método que cria string com a pontuação e envia no canal
+   public void enviarPontuacaoAoGrupo(){
+       StringBuilder builder = new StringBuilder();
+       builder.append(nomeJogador+";");
+       builder.append(PONTUACAO+";");
+       builder.append(palavras.size()+";");
+       for(Integer s: palavras)
+           builder.append(s+";");
+       enviaNoCanal(builder.toString());
+   }
+
    //método chamado para coordenador iniciar jogo
    private void iniciarJogo() {
        viewer.comecarJogo(salaJogo);
@@ -301,7 +321,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
 
    //método chamado quando o timer do jogo acaba
     public void finalizarJogo() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        salaJogo.calculaPontuacaoDosJogadores();
     }
     
     public String[][] getDados(){
@@ -322,5 +342,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         else
             return false;
     }
+    
+    
 
 }
