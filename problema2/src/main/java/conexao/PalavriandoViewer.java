@@ -9,6 +9,7 @@ public interface PalavriandoViewer {
     public void listarSalas(List<Sala> salas);
     public void infoSala(List<String> jogadores, int id, boolean eCoordenador);
     public void comecarJogo(Sala sala);
+    public void gerarRelatorio();
 
     //erros
     public void erroEntrouNaSala();

@@ -119,4 +119,10 @@ public class Sala {
         //ordena a coleção
         Collections.sort(jogadores, (left, right) -> left.pontos - right.pontos);
     }
+
+    public List<Jogador> getJogadores() {
+        return jogadores;
+    }
+    
+    
 }

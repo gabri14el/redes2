@@ -37,7 +37,8 @@ public class Servidor implements ProcessadorDeConexoes{
     public final static String ERRO_AUTENTICACAO = "erroAutenticacao";
     public final static String ERRO = "erro";
     public final static String SUCESSO = "sucesso";
-     public final static String SAIR_DA_SALA = "sairDaSala";
+    public final static String SAIR_DA_SALA = "sairDaSala";
+    public final static String INFO_SALA = "infoSala";
 
 
 
@@ -270,6 +271,13 @@ public class Servidor implements ProcessadorDeConexoes{
             }else
                 resposta.append(ERRO);
         }
+        
+        else if(requisicao.equals(INFO_SALA)){
+                int id = Integer.parseInt(token.nextToken());
+                Sala sala = salas.get(id);
+                resposta.append(sala.toString());
+        }
+    
         enviadorDeResposta.enviaResposta(resposta.toString());
     }
     public void erroDuranteConexao(String cliente, EnviadorDeResposta enviadorDeResposta, String nomeJogador) {

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClienteP2P, ProcessadorReqView , ProcessadorDeGrupo{
 
@@ -38,6 +40,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     public final static String ERRO = "erro";
     public final static String SUCESSO = "sucesso";
     public final static String SAIR_DA_SALA = "sairDaSala";
+    public final static String INFO_SALA = "infoSala";
     
     
     public final static String COMECAR_JOGO= "comecarJogo";
@@ -165,6 +168,41 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
             String proximoToken = token.nextToken();
             if(proximoToken.equals(ERRO));
         }
+        
+        else if(tipoRequisicao.equals(INFO_SALA)){
+            String proximoToken = token.nextToken();
+            if(proximoToken.equals(ERRO))
+                viewer.erroCriarSala();
+            else{
+                int salaId = Integer.parseInt(proximoToken);
+                int qtd_jogadores = Integer.parseInt(token.nextToken());
+
+                salaJogo = new Sala(qtd_jogadores, salaId, true);
+
+                for(int i = 0; i < qtd_jogadores; i++){
+                    String nome = token.nextToken();
+                    
+                    try {
+                        InetAddress endereco = InetAddress.getByName(token.nextToken());
+                        salaJogo.addJogador(new Jogador(endereco, nome));
+                    } catch (UnknownHostException e) {
+                        System.out.println("houve um erro na hora de resolver o endereço de um host...");
+                    }
+                }
+
+                String dados[][]=new String[4][4];
+                for (int i=0; i<4; i++)
+                    for (int j = 0;j<4; j++){
+                        dados[i][j] = token.nextToken();
+                    }
+                salaJogo.setDados(dados);
+                //chama método no viewer pra setar a a sala
+                //configuraCanal(token.nextToken());
+               iniciarJogo();
+               if(eCoordenadorDaSala()) comecarJogo();
+                
+            }
+        }
     }
 
 
@@ -193,6 +231,13 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
     public void listarSalas() {
         StringBuilder builder = new StringBuilder();
         builder.append(LISTA_DE_SALAS+";");
+        solicitaAoServidor(builder.toString());
+    }
+    
+    public void infoSala(){
+        StringBuilder builder = new StringBuilder();
+        builder.append(INFO_SALA+";");
+        builder.append(salaJogo.codigo);
         solicitaAoServidor(builder.toString());
     }
 
@@ -237,7 +282,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
         //se o coordenador enviar o comecar jogo
         if(requisicao.equals(COMECAR_JOGO)){
             if(usuario.equals(salaJogo.nomeDoCoordenador())){
-               iniciarJogo(); 
+               infoSala(); 
             }
         }else if(requisicao.equals(PONTUACAO)){
             int qtd = Integer.parseInt(token.nextToken());
@@ -300,6 +345,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
    
    //método que enviar no canal pra comecar jogo
    public void solicitaIniciarJogo(){
+       //comecarJogo();
        enviaNoCanal(nomeJogador+";"+COMECAR_JOGO);
    }
 
@@ -321,9 +367,27 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
 
    //método chamado quando o timer do jogo acaba
     public void finalizarJogo() {
-        salaJogo.calculaPontuacaoDosJogadores();
+        enviarPontuacaoAoGrupo();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(30000);
+                    fimDeJogo();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Palavriando.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }).start();
     }
     
+    public void fimDeJogo(){
+        canal.close();
+        salaJogo.calculaPontuacaoDosJogadores();
+        viewer.gerarRelatorio();
+    }
+    
+    //retorna a matriz que representa os dados
     public String[][] getDados(){
         return salaJogo.dados;
     }
@@ -343,6 +407,7 @@ public class Palavriando implements ProcessaConexaoServidor, ProcessaConexaoClie
             return false;
     }
     
-    
-
+    public List<Jogador> getJogadores(){
+        return salaJogo.getJogadores();
+    }
 }

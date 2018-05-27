@@ -8,5 +8,6 @@ public interface ProcessadorReqView {
     public void entrarNaSala(int id);
     public void listarSalas();
     public void comecarJogo();
+    
 
 }

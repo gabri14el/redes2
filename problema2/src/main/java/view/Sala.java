@@ -287,5 +287,10 @@ public class Sala extends javax.swing.JFrame implements PalavriandoViewer{
     public void erroRmSala() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void gerarRelatorio() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

@@ -47,7 +47,7 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Jogo.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                while(_timer > 0){
+                while(_timer >= 0){
                     timer.setText(""+_timer--);
                     try {
                         Thread.sleep(1000);
@@ -55,6 +55,9 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
                         Logger.getLogger(Jogo.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                ok_palavra.setVisible(false);
+                palavra_digitada.setVisible(false);
+                texto.setText("aguarde o resultado do jogo");
                 jogo.finalizarJogo();
             }
         }).start();
@@ -80,7 +83,7 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
         jScrollPane3 = new javax.swing.JScrollPane();
         dados = new javax.swing.JTextArea();
         timer = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        texto = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -116,7 +119,7 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
         timer.setFont(new java.awt.Font("Ubuntu", 0, 36)); // NOI18N
         timer.setText("jLabel3");
 
-        jLabel3.setText("Escreva uma nova palavra: ");
+        texto.setText("Escreva uma nova palavra: ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -132,7 +135,7 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
                         .addGap(18, 18, 18)
                         .addComponent(ok_palavra, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(timer)
-                    .addComponent(jLabel3))
+                    .addComponent(texto))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
@@ -154,7 +157,7 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(timer)
                         .addGap(29, 29, 29)
-                        .addComponent(jLabel3)
+                        .addComponent(texto)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(palavra_digitada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -177,7 +180,8 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
         if(jogo.verificaSeStringEstaNosDados(c))
         if(jogo.addPalavra(c)){
            DefaultListModel modelo_palavras = (DefaultListModel)lista_palavras.getModel();
-           modelo_palavras.addElement(c);
+           if(!modelo_palavras.contains(c))
+                modelo_palavras.addElement(c);
            palavra_digitada.setText("");
        }
     }//GEN-LAST:event_ok_palavraActionPerformed
@@ -188,7 +192,6 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
     private javax.swing.JTextArea dados;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -196,6 +199,7 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
     private javax.swing.JList<String> lista_palavras;
     private javax.swing.JButton ok_palavra;
     private javax.swing.JTextField palavra_digitada;
+    private javax.swing.JLabel texto;
     private javax.swing.JLabel timer;
     // End of variables declaration//GEN-END:variables
 
@@ -261,5 +265,13 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
 
     public void erroRmSala() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void gerarRelatorio() {
+        Relatorio rel = new view.Relatorio(jogo);
+        this.setVisible(false);
+        rel.setVisible(true);
+        this.dispose();
     }
 }

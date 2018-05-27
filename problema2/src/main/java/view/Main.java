@@ -296,6 +296,11 @@ public class Main extends javax.swing.JFrame implements PalavriandoViewer {
     private void prepararComponentes() {
         
     }
+
+    @Override
+    public void gerarRelatorio() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 }

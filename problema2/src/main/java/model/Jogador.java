@@ -42,6 +42,11 @@ public class Jogador {
            pontos+=aux.length();
        }
    }
+
+    public int getPontos() {
+        return pontos;
+    }
+   
    
     /**
      * Verifica se os jagores são iguais com base no nome
