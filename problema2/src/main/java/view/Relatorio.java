@@ -23,6 +23,7 @@ public class Relatorio extends javax.swing.JPanel {
         initComponents();
         this.jogo = jogo;
         configura();
+        this.setVisible(true);
     }
 
     /**
@@ -82,9 +83,12 @@ public class Relatorio extends javax.swing.JPanel {
         
         for(Jogador j: jogadores){
             modelo.addElement(j.getNome()+"fez "+j.getPontos()+" pontos");
+            System.out.println(j.getNome() + " "+j.getPontos());
         }
         
         lista_resultado.setModel(modelo);
+        System.out.println("o vencedor foi: "+jogadores.get(jogadores.size() - 1).getNome());
+        
         nome_vencedor.setText("o vencedor foi: "+jogadores.get(jogadores.size() - 1).getNome());
     }
 }

@@ -270,8 +270,8 @@ public class Jogo extends javax.swing.JFrame implements PalavriandoViewer{
     @Override
     public void gerarRelatorio() {
         Relatorio rel = new view.Relatorio(jogo);
-        this.setVisible(false);
-        rel.setVisible(true);
-        this.dispose();
+        //this.setVisible(false);
+        //rel.setVisible(true);
+        //this.dispose();
     }
 }
